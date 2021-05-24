@@ -97,6 +97,7 @@ export default function() {
         editable={{
           type: 'multiple',
           editableKeys: dataSource.map(item => item.id),
+          onValuesChange: (record, data) => setDataSource(data),
         }}
         recordCreatorProps={false}
       />
