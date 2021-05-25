@@ -1,4 +1,4 @@
-import { ModalForm, ProFormDigit } from '@ant-design/pro-form';
+import ProForm, { ModalForm, ProFormDigit } from '@ant-design/pro-form';
 import { EditableProTable, ProColumns } from '@ant-design/pro-table';
 import { Space } from 'antd';
 import { Rule } from 'antd/lib/form';
@@ -30,12 +30,14 @@ const defaultDataSource = [
 ];
 
 export default function() {
+  const [form] = ProForm.useForm();
   const [dataSource, setDataSource] = useState(defaultDataSource);
   const handleBatchSet = useCallback((field: string, value: number) => {
     console.log(field, value);
 
-    const source = dataSource.map(item => Object.assign(item, { [field]: value }));
-    setDataSource(source);
+    const datasource = dataSource.map(item => Object.assign(item, { [field]: value }));
+    form.setFieldsValue({ datasource });
+    // setDataSource(source);
     return true;
   }, []);
 
@@ -89,18 +91,20 @@ export default function() {
   );
   return (
     <div className={styles.normal}>
-      <EditableProTable
-        rowKey="id"
-        columns={skuColumns}
-        value={dataSource}
-        pagination={false}
-        editable={{
-          type: 'multiple',
-          editableKeys: dataSource.map(item => item.id),
-          onValuesChange: (record, data) => setDataSource(data),
-        }}
-        recordCreatorProps={false}
-      />
+      <ProForm form={form}>
+        <ProForm.Item name="datasource" initialValue={dataSource}>
+          <EditableProTable
+            rowKey="id"
+            columns={skuColumns}
+            pagination={false}
+            editable={{
+              type: 'multiple',
+              editableKeys: dataSource.map(item => item.id),
+            }}
+            recordCreatorProps={false}
+          />
+        </ProForm.Item>
+      </ProForm>
     </div>
   );
 }
